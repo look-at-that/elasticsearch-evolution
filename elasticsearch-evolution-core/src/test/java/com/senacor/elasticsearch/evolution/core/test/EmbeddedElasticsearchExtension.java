@@ -45,14 +45,8 @@ public class EmbeddedElasticsearchExtension implements TestInstancePostProcessor
     private static final Namespace NAMESPACE = Namespace.create(ExtensionContext.class);
     private static final SortedSet<SearchContainer> SUPPORTED_SEARCH_VERSIONS = Collections.unmodifiableSortedSet(new TreeSet<>(Arrays.asList(
             ofOpensearch("2.14.0"),
-            ofOpensearch("2.13.0"),
-            ofOpensearch("2.12.0"),
-            ofOpensearch("1.3.16"),
 
-            ofElasticsearch("8.13.4"),
-            ofElasticsearch("8.12.2"),
-            ofElasticsearch("8.11.4"),
-            ofElasticsearch("7.17.21")
+            ofElasticsearch("8.13.4")
     )));
 
     @Override
@@ -186,7 +180,7 @@ public class EmbeddedElasticsearchExtension implements TestInstancePostProcessor
                     .vendor("Opensearch")
                     .vendorShort("OS")
                     // dockerhub and public.ecr.aws can run into rate limit, so stay with quay.io
-                    .containerImage("quay.io/xtermi2/opensearch")
+                    .containerImage("opensearchproject/opensearch")
                     .version(version)
                     .env(ImmutableMap.of(
                             "OPENSEARCH_JAVA_OPTS", "-Xms128m -Xmx128m",
