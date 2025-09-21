@@ -68,7 +68,7 @@ public class MigrationScriptParserImpl implements MigrationScriptParser {
         return new ParsedMigrationScript()
                 .setFileNameInfo(parseFileName(rawMigrationScript.getFileName()))
                 .setChecksum(rawMigrationScript.getContent().hashCode())
-                .setMigrationScriptRequest(parseContent(rawMigrationScript));
+                .setMigrationScriptRequests(List.of(parseContent(rawMigrationScript)));
     }
 
     private MigrationScriptRequest parseContent(RawMigrationScript script) {

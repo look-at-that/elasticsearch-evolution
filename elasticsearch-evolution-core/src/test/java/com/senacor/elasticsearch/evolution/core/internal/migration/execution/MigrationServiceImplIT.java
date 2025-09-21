@@ -91,7 +91,7 @@ class MigrationServiceImplIT {
             List<String> allDocuments = esUtils.fetchAllDocuments(index);
             assertThat(allDocuments)
                     .hasSize(1)
-                    .contains(script.getMigrationScriptRequest().getBody());
+                    .contains(script.getMigrationScriptRequests().get(0).getBody());
         }
     }
 
@@ -100,10 +100,10 @@ class MigrationServiceImplIT {
                 .setFileNameInfo(
                         new FileNameInfoImpl(fromVersion(version), version, createDefaultScriptName(version)))
                 .setChecksum(1)
-                .setMigrationScriptRequest(new MigrationScriptRequest()
+                .setMigrationScriptRequests(List.of(new MigrationScriptRequest()
                         .setHttpMethod(PUT)
                         .setPath(index + "/" + HistoryRepositoryImpl.INDEX_TYPE_DOC + "/1")
-                        .setBody("{\"user\":\"kimchy\",\"post_date\":\"2009-11-15T14:12:12\"}"));
+                        .setBody("{\"user\":\"kimchy\",\"post_date\":\"2009-11-15T14:12:12\"}")));
     }
 
     private String createDefaultScriptName(String version) {

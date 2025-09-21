@@ -2,6 +2,7 @@ package com.senacor.elasticsearch.evolution.core.internal.model.migration;
 
 import com.senacor.elasticsearch.evolution.core.internal.model.FileNameInfo;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -27,7 +28,7 @@ public class ParsedMigrationScript {
      * Represents the HTTP request from the migration script
      * non-null
      */
-    private MigrationScriptRequest migrationScriptRequest;
+    private List<MigrationScriptRequest> migrationScriptRequests;
 
     public FileNameInfo getFileNameInfo() {
         return fileNameInfo;
@@ -47,12 +48,12 @@ public class ParsedMigrationScript {
         return this;
     }
 
-    public MigrationScriptRequest getMigrationScriptRequest() {
-        return migrationScriptRequest;
+    public List<MigrationScriptRequest> getMigrationScriptRequests() {
+        return migrationScriptRequests;
     }
 
-    public ParsedMigrationScript setMigrationScriptRequest(MigrationScriptRequest migrationScriptRequest) {
-        this.migrationScriptRequest = migrationScriptRequest;
+    public ParsedMigrationScript setMigrationScriptRequests(List<MigrationScriptRequest> migrationScriptRequests) {
+        this.migrationScriptRequests = migrationScriptRequests;
         return this;
     }
 
@@ -61,13 +62,13 @@ public class ParsedMigrationScript {
         return "ParsedMigrationScript{" +
                 "fileNameInfo=" + fileNameInfo +
                 ", checksum=" + checksum +
-                ", migrationScriptRequest=" + migrationScriptRequest +
+                ", migrationScriptRequest=" + migrationScriptRequests +
                 '}';
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fileNameInfo, checksum, migrationScriptRequest);
+        return Objects.hash(fileNameInfo, checksum, migrationScriptRequests);
     }
 
     @Override
@@ -81,6 +82,7 @@ public class ParsedMigrationScript {
         final ParsedMigrationScript other = (ParsedMigrationScript) obj;
         return Objects.equals(this.fileNameInfo, other.fileNameInfo)
                 && Objects.equals(this.checksum, other.checksum)
-                && Objects.equals(this.migrationScriptRequest, other.migrationScriptRequest);
+                // FIXME
+                && Objects.equals(this.migrationScriptRequests, other.migrationScriptRequests);
     }
 }

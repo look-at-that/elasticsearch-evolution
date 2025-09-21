@@ -120,43 +120,53 @@ public class MigrationServiceImpl implements MigrationService {
      */
     ExecutionResult executeScript(ParsedMigrationScript scriptToExecute) {
         logger.info("executing script {}", scriptToExecute.getFileNameInfo().getScriptName());
-        boolean success = false;
+        boolean success = true;
         long startTimeInMillis = System.currentTimeMillis();
         Optional<RuntimeException> error = Optional.empty();
+
         try {
-            Request request = new Request(scriptToExecute.getMigrationScriptRequest().getHttpMethod().name(),
-                    scriptToExecute.getMigrationScriptRequest().getPath());
-            if (null != scriptToExecute.getMigrationScriptRequest().getBody()
-                    && !scriptToExecute.getMigrationScriptRequest().getBody().trim().isEmpty()) {
-                ContentType contentType = scriptToExecute.getMigrationScriptRequest().getContentType()
-                        .orElse(defaultContentType);
-                if (null == contentType.getCharset()) {
-                    logger.debug("no charset is defined for {}, setting to configured encoding {}", scriptToExecute.getFileNameInfo(), encoding);
-                    contentType = contentType.withCharset(encoding);
+            scriptToExecute.getMigrationScriptRequests().forEach( msr -> {
+
+                try {
+                    Request request = new Request(msr.getHttpMethod().name(), msr.getPath());
+                    if (null != msr.getBody() && !msr.getBody().trim().isEmpty()) {
+
+                        ContentType contentType = msr.getContentType().orElse(defaultContentType);
+
+                        if (null == contentType.getCharset()) {
+                            logger.debug("no charset is defined for {}, setting to configured encoding {}", scriptToExecute.getFileNameInfo(), encoding);
+                            contentType = contentType.withCharset(encoding);
+                        }
+
+                        request.setEntity(new NStringEntity(msr.getBody(), contentType));
+                    }
+
+                    RequestOptions.Builder builder = RequestOptions.DEFAULT.toBuilder();
+                    msr.getHttpHeader().forEach(builder::addHeader);
+                    request.setOptions(builder);
+
+                    Response response = restClient.performRequest(request);
+
+                    int statusCode = response.getStatusLine().getStatusCode();
+                    if (statusCode >= 200 && statusCode < 300) {
+                        //
+                    } else {
+                        throw new MigrationException(
+                                "execution of script '%s' failed with HTTP status %s: %s".formatted(
+                                        scriptToExecute.getFileNameInfo(),
+                                        statusCode,
+                                        response.toString()));
+                    }
+                } catch (RuntimeException | IOException e) {
+                    throw new MigrationException("execution of script '%s' failed".formatted(scriptToExecute.getFileNameInfo()), e);
                 }
-                request.setEntity(new NStringEntity(scriptToExecute.getMigrationScriptRequest().getBody(), contentType));
-            }
+            });
 
-            RequestOptions.Builder builder = RequestOptions.DEFAULT.toBuilder();
-            scriptToExecute.getMigrationScriptRequest().getHttpHeader()
-                    .forEach(builder::addHeader);
-            request.setOptions(builder);
-
-            Response response = restClient.performRequest(request);
-
-            int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode >= 200 && statusCode < 300) {
-                success = true;
-            } else {
-                error = Optional.of(new MigrationException(
-                        "execution of script '%s' failed with HTTP status %s: %s".formatted(
-                        scriptToExecute.getFileNameInfo(),
-                        statusCode,
-                        response.toString())));
-            }
-        } catch (RuntimeException | IOException e) {
-            error = Optional.of(new MigrationException("execution of script '%s' failed".formatted(scriptToExecute.getFileNameInfo()), e));
+        } catch (MigrationException e) {
+            success = false;
+            error = Optional.of(e);
         }
+
 
         return new ExecutionResult(
                 new MigrationScriptProtocol()

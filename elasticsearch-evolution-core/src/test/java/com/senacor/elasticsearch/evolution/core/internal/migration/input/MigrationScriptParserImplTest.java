@@ -175,11 +175,11 @@ class MigrationScriptParserImplTest {
                     new ParsedMigrationScript()
                             .setChecksum(defaultContent.hashCode())
                             .setFileNameInfo(new FileNameInfoImpl(MigrationVersion.fromVersion("1"), "create", "V1__create.http"))
-                            .setMigrationScriptRequest(expectedRequest),
+                            .setMigrationScriptRequests(List.of(expectedRequest)),
                     new ParsedMigrationScript()
                             .setChecksum(defaultContent.hashCode())
                             .setFileNameInfo(new FileNameInfoImpl(MigrationVersion.fromVersion("2"), "update", "V2__update.http"))
-                            .setMigrationScriptRequest(expectedRequest));
+                            .setMigrationScriptRequests(List.of(expectedRequest)));
         }
     }
 
@@ -216,17 +216,17 @@ class MigrationScriptParserImplTest {
                 softly.assertThat(res.getFileNameInfo().getDescription())
                         .as("description")
                         .isEqualTo("create");
-                softly.assertThat(res.getMigrationScriptRequest().getHttpMethod())
+                softly.assertThat(res.getMigrationScriptRequests().get(0).getHttpMethod())
                         .as("methot")
                         .isEqualTo(HttpMethod.PUT);
-                softly.assertThat(res.getMigrationScriptRequest().getPath())
+                softly.assertThat(res.getMigrationScriptRequests().get(0).getPath())
                         .as("path")
                         .isEqualTo("/");
-                softly.assertThat(res.getMigrationScriptRequest().getHttpHeader())
+                softly.assertThat(res.getMigrationScriptRequests().get(0).getHttpHeader())
                         .as("header")
                         .containsEntry("Header", "value")
                         .hasSize(1);
-                softly.assertThat(res.getMigrationScriptRequest().getBody())
+                softly.assertThat(res.getMigrationScriptRequests().get(0).getBody())
                         .as("body")
                         .isEqualTo("{" + lineSeparator() + "\"body\":\"value\"" + lineSeparator() + "}");
             });
@@ -256,16 +256,16 @@ class MigrationScriptParserImplTest {
                 softly.assertThat(res.getFileNameInfo().getDescription())
                         .as("description")
                         .isEqualTo("create");
-                softly.assertThat(res.getMigrationScriptRequest().getHttpMethod())
+                softly.assertThat(res.getMigrationScriptRequests().get(0).getHttpMethod())
                         .as("methot")
                         .isEqualTo(HttpMethod.PUT);
-                softly.assertThat(res.getMigrationScriptRequest().getPath())
+                softly.assertThat(res.getMigrationScriptRequests().get(0).getPath())
                         .as("path")
                         .isEqualTo("/");
-                softly.assertThat(res.getMigrationScriptRequest().getHttpHeader())
+                softly.assertThat(res.getMigrationScriptRequests().get(0).getHttpHeader())
                         .as("header")
                         .isEmpty();
-                softly.assertThat(res.getMigrationScriptRequest().getBody())
+                softly.assertThat(res.getMigrationScriptRequests().get(0).getBody())
                         .as("body")
                         .isEqualTo("{" + lineSeparator() + "\"body\":\"value\"" + lineSeparator() + "}");
             });
@@ -294,17 +294,17 @@ class MigrationScriptParserImplTest {
                 softly.assertThat(res.getFileNameInfo().getDescription())
                         .as("description")
                         .isEqualTo("create");
-                softly.assertThat(res.getMigrationScriptRequest().getHttpMethod())
+                softly.assertThat(res.getMigrationScriptRequests().get(0).getHttpMethod())
                         .as("methot")
                         .isEqualTo(HttpMethod.PUT);
-                softly.assertThat(res.getMigrationScriptRequest().getPath())
+                softly.assertThat(res.getMigrationScriptRequests().get(0).getPath())
                         .as("path")
                         .isEqualTo("/");
-                softly.assertThat(res.getMigrationScriptRequest().getHttpHeader())
+                softly.assertThat(res.getMigrationScriptRequests().get(0).getHttpHeader())
                         .as("header")
                         .containsEntry("Header", "value:a")
                         .hasSize(1);
-                softly.assertThat(res.getMigrationScriptRequest().getBody())
+                softly.assertThat(res.getMigrationScriptRequests().get(0).getBody())
                         .as("body")
                         .isBlank();
             });
@@ -332,16 +332,16 @@ class MigrationScriptParserImplTest {
                 softly.assertThat(res.getFileNameInfo().getDescription())
                         .as("description")
                         .isEqualTo("create");
-                softly.assertThat(res.getMigrationScriptRequest().getHttpMethod())
+                softly.assertThat(res.getMigrationScriptRequests().get(0).getHttpMethod())
                         .as("methot")
                         .isEqualTo(HttpMethod.PUT);
-                softly.assertThat(res.getMigrationScriptRequest().getPath())
+                softly.assertThat(res.getMigrationScriptRequests().get(0).getPath())
                         .as("path")
                         .isEqualTo("/");
-                softly.assertThat(res.getMigrationScriptRequest().getHttpHeader())
+                softly.assertThat(res.getMigrationScriptRequests().get(0).getHttpHeader())
                         .as("header")
                         .isEmpty();
-                softly.assertThat(res.getMigrationScriptRequest().getBody())
+                softly.assertThat(res.getMigrationScriptRequests().get(0).getBody())
                         .as("body")
                         .isBlank();
             });
@@ -383,16 +383,16 @@ class MigrationScriptParserImplTest {
                 softly.assertThat(res.getFileNameInfo().getDescription())
                         .as("description")
                         .isEqualTo("create");
-                softly.assertThat(res.getMigrationScriptRequest().getHttpMethod())
+                softly.assertThat(res.getMigrationScriptRequests().get(0).getHttpMethod())
                         .as("methot")
                         .isEqualTo(HttpMethod.PUT);
-                softly.assertThat(res.getMigrationScriptRequest().getPath())
+                softly.assertThat(res.getMigrationScriptRequests().get(0).getPath())
                         .as("path")
                         .isEqualTo("/my-index");
-                softly.assertThat(res.getMigrationScriptRequest().getHttpHeader())
+                softly.assertThat(res.getMigrationScriptRequests().get(0).getHttpHeader())
                         .as("header")
                         .containsEntry("Authorization", "my-auth-key");
-                softly.assertThat(res.getMigrationScriptRequest().getBody())
+                softly.assertThat(res.getMigrationScriptRequests().get(0).getBody())
                         .as("body")
                         .isEqualTo("{" + lineSeparator() + "\"index\":\"my-index\"" + lineSeparator() + "}");
             });
@@ -432,16 +432,16 @@ class MigrationScriptParserImplTest {
                 softly.assertThat(res.getFileNameInfo().getDescription())
                         .as("description")
                         .isEqualTo("create");
-                softly.assertThat(res.getMigrationScriptRequest().getHttpMethod())
+                softly.assertThat(res.getMigrationScriptRequests().get(0).getHttpMethod())
                         .as("methot")
                         .isEqualTo(HttpMethod.PUT);
-                softly.assertThat(res.getMigrationScriptRequest().getPath())
+                softly.assertThat(res.getMigrationScriptRequests().get(0).getPath())
                         .as("path")
                         .isEqualTo("/my-index");
-                softly.assertThat(res.getMigrationScriptRequest().getHttpHeader())
+                softly.assertThat(res.getMigrationScriptRequests().get(0).getHttpHeader())
                         .as("header")
                         .isEmpty();
-                softly.assertThat(res.getMigrationScriptRequest().getBody())
+                softly.assertThat(res.getMigrationScriptRequests().get(0).getBody())
                         .as("body")
                         .isEqualTo("{" + lineSeparator() + "\"index\":\"my-index\"" + lineSeparator() + "}" + lineSeparator());
             });
