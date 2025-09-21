@@ -91,7 +91,7 @@ class MigrationServiceImplIT {
             List<String> allDocuments = esUtils.fetchAllDocuments(index);
             assertThat(allDocuments)
                     .hasSize(1)
-                    .contains(script.getMigrationScriptRequests().get(0).getBody());
+                    .contains(script.getMigrationScriptRequests().getFirst().getBody());
         }
     }
 

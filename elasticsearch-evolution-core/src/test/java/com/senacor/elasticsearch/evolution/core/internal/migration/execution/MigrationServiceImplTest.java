@@ -154,7 +154,7 @@ class MigrationServiceImplTest {
             List<ParsedMigrationScript> res = underTest.getPendingScriptsToBeExecuted(parsedMigrationScripts);
 
             assertThat(res).hasSize(1);
-            assertThat(res.get(0)).isSameAs(parsedMigrationScript1_1);
+            assertThat(res.getFirst()).isSameAs(parsedMigrationScript1_1);
             InOrder order = inOrder(historyRepository);
             order.verify(historyRepository).findAll();
             order.verifyNoMoreInteractions();
@@ -419,15 +419,15 @@ class MigrationServiceImplTest {
             order.verify(restClient).performRequest(argThat(argument -> {
                 assertSoftly(softly -> {
                     softly.assertThat(argument.getMethod())
-                            .isEqualToIgnoringCase(script.getMigrationScriptRequests().get(0).getHttpMethod().name())
+                            .isEqualToIgnoringCase(script.getMigrationScriptRequests().getFirst().getHttpMethod().name())
                             .isNotNull();
                     softly.assertThat(argument.getEndpoint())
-                            .isEqualTo(script.getMigrationScriptRequests().get(0).getPath())
+                            .isEqualTo(script.getMigrationScriptRequests().getFirst().getPath())
                             .isNotNull();
                     softly.assertThat(argument.getEntity())
                             .isNull();
                     softly.assertThat(argument.getOptions().getHeaders())
-                            .hasSize(script.getMigrationScriptRequests().get(0).getHttpHeader().size())
+                            .hasSize(script.getMigrationScriptRequests().getFirst().getHttpHeader().size())
                             .isEmpty();
                 });
                 return true;
@@ -438,7 +438,7 @@ class MigrationServiceImplTest {
         @Test
         void OK_requestWithBody() throws IOException {
             ParsedMigrationScript script = createParsedMigrationScript("1.1");
-            script.getMigrationScriptRequests().get(0).setBody("my-body");
+            script.getMigrationScriptRequests().getFirst().setBody("my-body");
             Response responseMock = createResponseMock(200);
             doReturn(responseMock).when(restClient).performRequest(any());
 
@@ -453,19 +453,19 @@ class MigrationServiceImplTest {
             order.verify(restClient).performRequest(argThat(argument -> {
                 assertSoftly(softly -> {
                     softly.assertThat(argument.getMethod())
-                            .isEqualToIgnoringCase(script.getMigrationScriptRequests().get(0).getHttpMethod().name())
+                            .isEqualToIgnoringCase(script.getMigrationScriptRequests().getFirst().getHttpMethod().name())
                             .isNotNull();
                     softly.assertThat(argument.getEndpoint())
-                            .isEqualTo(script.getMigrationScriptRequests().get(0).getPath())
+                            .isEqualTo(script.getMigrationScriptRequests().getFirst().getPath())
                             .isNotNull();
                     softly.assertThat(argument.getEntity().getContentLength())
-                            .isEqualTo(script.getMigrationScriptRequests().get(0).getBody().length());
+                            .isEqualTo(script.getMigrationScriptRequests().getFirst().getBody().length());
                     softly.assertThat(argument.getEntity().getContentType().getValue())
                             .isEqualTo(defaultContentType.toString());
                     softly.assertThat(argument.getEntity().getContentEncoding())
                             .isNull();
                     softly.assertThat(argument.getOptions().getHeaders())
-                            .hasSize(script.getMigrationScriptRequests().get(0).getHttpHeader().size())
+                            .hasSize(script.getMigrationScriptRequests().getFirst().getHttpHeader().size())
                             .isEmpty();
                 });
                 return true;
@@ -477,7 +477,7 @@ class MigrationServiceImplTest {
         void OK_requestWithCustomContentTypeAndDefaultCharset() throws IOException {
             ParsedMigrationScript script = createParsedMigrationScript("1.1");
             String contentType = "text/plain";
-            script.getMigrationScriptRequests().get(0).setBody("my-body")
+            script.getMigrationScriptRequests().getFirst().setBody("my-body")
                     .addHttpHeader("content-type", contentType);
             Response responseMock = createResponseMock(200);
             doReturn(responseMock).when(restClient).performRequest(any());
@@ -493,19 +493,19 @@ class MigrationServiceImplTest {
             order.verify(restClient).performRequest(argThat(argument -> {
                 assertSoftly(softly -> {
                     softly.assertThat(argument.getMethod())
-                            .isEqualToIgnoringCase(script.getMigrationScriptRequests().get(0).getHttpMethod().name())
+                            .isEqualToIgnoringCase(script.getMigrationScriptRequests().getFirst().getHttpMethod().name())
                             .isNotNull();
                     softly.assertThat(argument.getEndpoint())
-                            .isEqualTo(script.getMigrationScriptRequests().get(0).getPath())
+                            .isEqualTo(script.getMigrationScriptRequests().getFirst().getPath())
                             .isNotNull();
                     softly.assertThat(argument.getEntity().getContentLength())
-                            .isEqualTo(script.getMigrationScriptRequests().get(0).getBody().length());
+                            .isEqualTo(script.getMigrationScriptRequests().getFirst().getBody().length());
                     softly.assertThat(argument.getEntity().getContentType().getValue())
                             .isEqualTo(contentType + "; charset=" + encoding);
                     softly.assertThat(argument.getEntity().getContentEncoding())
                             .isNull();
                     softly.assertThat(argument.getOptions().getHeaders())
-                            .hasSize(script.getMigrationScriptRequests().get(0).getHttpHeader().size());
+                            .hasSize(script.getMigrationScriptRequests().getFirst().getHttpHeader().size());
                 });
                 return true;
             }));
@@ -516,7 +516,7 @@ class MigrationServiceImplTest {
         void OK_requestWithCustomContentTypeAndCustomCharset() throws IOException {
             ParsedMigrationScript script = createParsedMigrationScript("1.1");
             String contentType = "text/plain; charset=" + StandardCharsets.ISO_8859_1;
-            script.getMigrationScriptRequests().get(0).setBody("my-body")
+            script.getMigrationScriptRequests().getFirst().setBody("my-body")
                     .addHttpHeader("content-type", contentType);
             Response responseMock = createResponseMock(200);
             doReturn(responseMock).when(restClient).performRequest(any());
@@ -532,19 +532,19 @@ class MigrationServiceImplTest {
             order.verify(restClient).performRequest(argThat(argument -> {
                 assertSoftly(softly -> {
                     softly.assertThat(argument.getMethod())
-                            .isEqualToIgnoringCase(script.getMigrationScriptRequests().get(0).getHttpMethod().name())
+                            .isEqualToIgnoringCase(script.getMigrationScriptRequests().getFirst().getHttpMethod().name())
                             .isNotNull();
                     softly.assertThat(argument.getEndpoint())
-                            .isEqualTo(script.getMigrationScriptRequests().get(0).getPath())
+                            .isEqualTo(script.getMigrationScriptRequests().getFirst().getPath())
                             .isNotNull();
                     softly.assertThat(argument.getEntity().getContentLength())
-                            .isEqualTo(script.getMigrationScriptRequests().get(0).getBody().length());
+                            .isEqualTo(script.getMigrationScriptRequests().getFirst().getBody().length());
                     softly.assertThat(argument.getEntity().getContentType().getValue())
                             .isEqualTo(contentType);
                     softly.assertThat(argument.getEntity().getContentEncoding())
                             .isNull();
                     softly.assertThat(argument.getOptions().getHeaders())
-                            .hasSize(script.getMigrationScriptRequests().get(0).getHttpHeader().size());
+                            .hasSize(script.getMigrationScriptRequests().getFirst().getHttpHeader().size());
                 });
                 return true;
             }));
@@ -556,7 +556,7 @@ class MigrationServiceImplTest {
             ParsedMigrationScript script = createParsedMigrationScript("1.1");
             String headerKey = "X-Custom-header";
             String headerValue = "custom-value";
-            script.getMigrationScriptRequests().get(0)
+            script.getMigrationScriptRequests().getFirst()
                     .addHttpHeader(headerKey, headerValue);
             Response responseMock = createResponseMock(200);
             doReturn(responseMock).when(restClient).performRequest(any());
@@ -572,18 +572,18 @@ class MigrationServiceImplTest {
             order.verify(restClient).performRequest(argThat(argument -> {
                 assertSoftly(softly -> {
                     softly.assertThat(argument.getMethod())
-                            .isEqualToIgnoringCase(script.getMigrationScriptRequests().get(0).getHttpMethod().name())
+                            .isEqualToIgnoringCase(script.getMigrationScriptRequests().getFirst().getHttpMethod().name())
                             .isNotNull();
                     softly.assertThat(argument.getEndpoint())
-                            .isEqualTo(script.getMigrationScriptRequests().get(0).getPath())
+                            .isEqualTo(script.getMigrationScriptRequests().getFirst().getPath())
                             .isNotNull();
                     softly.assertThat(argument.getEntity())
                             .isNull();
                     softly.assertThat(argument.getOptions().getHeaders())
                             .hasSize(1);
-                    softly.assertThat(argument.getOptions().getHeaders().get(0).getName())
+                    softly.assertThat(argument.getOptions().getHeaders().getFirst().getName())
                             .isEqualTo(headerKey);
-                    softly.assertThat(argument.getOptions().getHeaders().get(0).getValue())
+                    softly.assertThat(argument.getOptions().getHeaders().getFirst().getValue())
                             .isEqualTo(headerValue);
                 });
                 return true;
@@ -700,7 +700,7 @@ class MigrationServiceImplTest {
             assertThatThrownBy(() -> underTest.executePendingScripts(scripts))
                     .isInstanceOf(MigrationException.class)
                     .hasMessage("execution of script '%s' failed with HTTP status %s: Response(%s)",
-                            scripts.get(0).getFileNameInfo(),
+                            scripts.getFirst().getFileNameInfo(),
                             statusCode,
                             statusCode);
 

@@ -216,17 +216,17 @@ class MigrationScriptParserImplTest {
                 softly.assertThat(res.getFileNameInfo().getDescription())
                         .as("description")
                         .isEqualTo("create");
-                softly.assertThat(res.getMigrationScriptRequests().get(0).getHttpMethod())
+                softly.assertThat(res.getMigrationScriptRequests().getFirst().getHttpMethod())
                         .as("methot")
                         .isEqualTo(HttpMethod.PUT);
-                softly.assertThat(res.getMigrationScriptRequests().get(0).getPath())
+                softly.assertThat(res.getMigrationScriptRequests().getFirst().getPath())
                         .as("path")
                         .isEqualTo("/");
-                softly.assertThat(res.getMigrationScriptRequests().get(0).getHttpHeader())
+                softly.assertThat(res.getMigrationScriptRequests().getFirst().getHttpHeader())
                         .as("header")
                         .containsEntry("Header", "value")
                         .hasSize(1);
-                softly.assertThat(res.getMigrationScriptRequests().get(0).getBody())
+                softly.assertThat(res.getMigrationScriptRequests().getFirst().getBody())
                         .as("body")
                         .isEqualTo("{" + lineSeparator() + "\"body\":\"value\"" + lineSeparator() + "}");
             });
@@ -256,16 +256,16 @@ class MigrationScriptParserImplTest {
                 softly.assertThat(res.getFileNameInfo().getDescription())
                         .as("description")
                         .isEqualTo("create");
-                softly.assertThat(res.getMigrationScriptRequests().get(0).getHttpMethod())
+                softly.assertThat(res.getMigrationScriptRequests().getFirst().getHttpMethod())
                         .as("methot")
                         .isEqualTo(HttpMethod.PUT);
-                softly.assertThat(res.getMigrationScriptRequests().get(0).getPath())
+                softly.assertThat(res.getMigrationScriptRequests().getFirst().getPath())
                         .as("path")
                         .isEqualTo("/");
-                softly.assertThat(res.getMigrationScriptRequests().get(0).getHttpHeader())
+                softly.assertThat(res.getMigrationScriptRequests().getFirst().getHttpHeader())
                         .as("header")
                         .isEmpty();
-                softly.assertThat(res.getMigrationScriptRequests().get(0).getBody())
+                softly.assertThat(res.getMigrationScriptRequests().getFirst().getBody())
                         .as("body")
                         .isEqualTo("{" + lineSeparator() + "\"body\":\"value\"" + lineSeparator() + "}");
             });
@@ -432,16 +432,16 @@ class MigrationScriptParserImplTest {
                 softly.assertThat(res.getFileNameInfo().getDescription())
                         .as("description")
                         .isEqualTo("create");
-                softly.assertThat(res.getMigrationScriptRequests().get(0).getHttpMethod())
+                softly.assertThat(res.getMigrationScriptRequests().getFirst().getHttpMethod())
                         .as("methot")
                         .isEqualTo(HttpMethod.PUT);
-                softly.assertThat(res.getMigrationScriptRequests().get(0).getPath())
+                softly.assertThat(res.getMigrationScriptRequests().getFirst().getPath())
                         .as("path")
                         .isEqualTo("/my-index");
-                softly.assertThat(res.getMigrationScriptRequests().get(0).getHttpHeader())
+                softly.assertThat(res.getMigrationScriptRequests().getFirst().getHttpHeader())
                         .as("header")
                         .isEmpty();
-                softly.assertThat(res.getMigrationScriptRequests().get(0).getBody())
+                softly.assertThat(res.getMigrationScriptRequests().getFirst().getBody())
                         .as("body")
                         .isEqualTo("{" + lineSeparator() + "\"index\":\"my-index\"" + lineSeparator() + "}" + lineSeparator());
             });
