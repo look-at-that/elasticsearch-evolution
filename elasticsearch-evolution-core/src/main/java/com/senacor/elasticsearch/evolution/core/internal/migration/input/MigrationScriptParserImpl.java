@@ -10,6 +10,7 @@ import com.senacor.elasticsearch.evolution.core.internal.model.migration.Migrati
 import com.senacor.elasticsearch.evolution.core.internal.model.migration.ParsedMigrationScript;
 import com.senacor.elasticsearch.evolution.core.internal.model.migration.RawMigrationScript;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +69,23 @@ public class MigrationScriptParserImpl implements MigrationScriptParser {
         return new ParsedMigrationScript()
                 .setFileNameInfo(parseFileName(rawMigrationScript.getFileName()))
                 .setChecksum(rawMigrationScript.getContent().hashCode())
-                .setMigrationScriptRequests(List.of(parseContent(rawMigrationScript)));
+                .setMigrationScriptRequests(
+                        //List.of(parseContent(rawMigrationScript))
+                        parseMultiRequestContent(rawMigrationScript)
+                        );
+    }
+
+    // FIXME, separator must me at the start of line
+    private List<MigrationScriptRequest> parseMultiRequestContent(RawMigrationScript script) {
+        return Arrays.stream(script.getContent().split("---" + System.lineSeparator()))
+                .map(content -> {
+                    var singleScript = new RawMigrationScript();
+                    singleScript.setContent(content);
+                    singleScript.setFileName(script.getFileName());
+                    return singleScript;
+
+
+                }).map(this::parseContent).toList();
     }
 
     private MigrationScriptRequest parseContent(RawMigrationScript script) {
@@ -99,7 +116,7 @@ public class MigrationScriptParserImpl implements MigrationScriptParser {
                         res.addToBody(line);
                         break;
                     default:
-                        throw new UnsupportedOperationException("state '" + state + "' not supportet");
+                        throw new UnsupportedOperationException("state '" + state + "' not supported");
                 }
             }
         }
@@ -164,14 +181,14 @@ public class MigrationScriptParserImpl implements MigrationScriptParser {
         if (separatorPos < 0) {
             throw new MigrationException(
                     "Description in migration filename is required: '%s'. It should look like this: '%s1.2%ssome_desctiption here%s'".formatted(
-                    migrationName, prefix, separator, suffixes.get(0)));
+                    migrationName, prefix, separator, suffixes.getFirst()));
         }
 
         description = cleanMigrationName.substring(separatorPos + separator.length()).replace("_", " ");
         version = requireNotBlank(cleanMigrationName.substring(0, separatorPos),
                 "Wrong versioned migration name format: '" + migrationName
                         + "' (It must contain a version and should look like this: "
-                        + prefix + "1.2" + separator + description + suffixes.get(0) + ")");
+                        + prefix + "1.2" + separator + description + suffixes.getFirst() + ")");
 
         MigrationVersion migrationVersion = MigrationVersion.fromVersion(version);
         requireCondition(migrationVersion,
