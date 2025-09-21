@@ -157,6 +157,9 @@ public class MigrationServiceImpl implements MigrationService {
                                         statusCode,
                                         response.toString()));
                     }
+
+                } catch (MigrationException me) {
+                    throw me;
                 } catch (RuntimeException | IOException e) {
                     throw new MigrationException("execution of script '%s' failed".formatted(scriptToExecute.getFileNameInfo()), e);
                 }
