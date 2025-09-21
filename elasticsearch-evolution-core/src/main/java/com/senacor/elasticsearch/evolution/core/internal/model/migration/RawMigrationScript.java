@@ -19,6 +19,14 @@ public class RawMigrationScript {
      */
     private String content;
 
+    public RawMigrationScript() {
+    }
+
+    public RawMigrationScript(String fileName, String content) {
+        this.fileName = fileName;
+        this.content = content;
+    }
+
     public String getFileName() {
         return fileName;
     }

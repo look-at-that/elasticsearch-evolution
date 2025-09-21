@@ -10,7 +10,6 @@ import com.senacor.elasticsearch.evolution.core.internal.model.migration.Migrati
 import com.senacor.elasticsearch.evolution.core.internal.model.migration.ParsedMigrationScript;
 import com.senacor.elasticsearch.evolution.core.internal.model.migration.RawMigrationScript;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +17,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static com.senacor.elasticsearch.evolution.core.internal.utils.AssertionUtils.requireCondition;
 import static com.senacor.elasticsearch.evolution.core.internal.utils.AssertionUtils.requireNotBlank;
+import static java.lang.System.lineSeparator;
+import static java.util.Arrays.stream;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -28,6 +29,7 @@ import static java.util.Objects.requireNonNull;
 public class MigrationScriptParserImpl implements MigrationScriptParser {
 
     private static final String VERSION_DESCRIPTION_SEPARATOR = "__";
+    private static final String SCRIPT_STEPS_SEPARATOR = "---";
 
     private final String esMigrationPrefix;
     private final List<String> esMigrationSuffixes;
@@ -71,21 +73,15 @@ public class MigrationScriptParserImpl implements MigrationScriptParser {
                 .setChecksum(rawMigrationScript.getContent().hashCode())
                 .setMigrationScriptRequests(
                         //List.of(parseContent(rawMigrationScript))
-                        parseMultiRequestContent(rawMigrationScript)
+                        parseContentSteps(rawMigrationScript)
                         );
     }
 
-    // FIXME, separator must me at the start of line
-    private List<MigrationScriptRequest> parseMultiRequestContent(RawMigrationScript script) {
-        return Arrays.stream(script.getContent().split("---" + System.lineSeparator()))
-                .map(content -> {
-                    var singleScript = new RawMigrationScript();
-                    singleScript.setContent(content);
-                    singleScript.setFileName(script.getFileName());
-                    return singleScript;
-
-
-                }).map(this::parseContent).toList();
+    private List<MigrationScriptRequest> parseContentSteps(RawMigrationScript script) {
+        return stream(script.getContent().split("^" + SCRIPT_STEPS_SEPARATOR + lineSeparator()))
+                .map(content -> new RawMigrationScript(script.getFileName(), content))
+                .map(this::parseContent)
+                .toList();
     }
 
     private MigrationScriptRequest parseContent(RawMigrationScript script) {
