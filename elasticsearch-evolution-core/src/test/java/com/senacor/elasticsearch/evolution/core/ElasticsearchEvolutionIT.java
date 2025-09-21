@@ -224,4 +224,26 @@ class ElasticsearchEvolutionIT {
                     .allMatch(MigrationScriptProtocol::isSuccess);
         });
     }
+
+    @ParameterizedTest(name = "{0}")
+    @ArgumentsSource(ElasticsearchArgumentsProvider.class)
+    void migrate_multistepScript_ok(String versionInfo, EsUtils esUtils, RestHighLevelClient restHighLevelClient) {
+        ElasticsearchEvolutionConfig elasticsearchEvolutionConfig = ElasticsearchEvolution.configure()
+                .setLocations(singletonList("classpath:es/ElasticsearchEvolutionTest/migrate_multisteps"));
+        String historyIndex = elasticsearchEvolutionConfig.getHistoryIndex();
+        historyRepository = new HistoryRepositoryImpl(restHighLevelClient.getLowLevelClient(), historyIndex, new MigrationScriptProtocolMapper(), 1000, objectMapper);
+
+
+        assertSoftly(softly -> {
+            softly.assertThat(elasticsearchEvolutionConfig.load(restHighLevelClient.getLowLevelClient()).migrate())
+                    .as("# of successful executed scripts ")
+                    .isEqualTo(1);
+            softly.assertThat(historyRepository.findAll())
+                    .as("# of historyIndex entries and all are successful")
+                    .hasSize(1)
+                    .allMatch(MigrationScriptProtocol::isSuccess);
+        });
+        esUtils.refreshIndices();
+
+    }
 }

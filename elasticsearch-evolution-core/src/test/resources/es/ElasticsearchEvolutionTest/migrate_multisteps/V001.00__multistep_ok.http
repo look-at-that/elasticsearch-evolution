@@ -1,0 +1,23 @@
+PUT multistep/
+Content-Type: application/json
+
+{
+
+  "settings" : {
+    "number_of_shards" : 1
+  },
+  "mappings" : {
+    "properties" : {
+        "my_field": {"type": "text"}
+    }
+  }
+}
+
+---
+
+PUT multistep/_doc/1?refresh
+Content-Type: application/json
+
+{
+   "my_field": "expect_to_be_found"
+}
