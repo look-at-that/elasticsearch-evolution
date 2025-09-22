@@ -148,9 +148,7 @@ public class MigrationServiceImpl implements MigrationService {
                     Response response = restClient.performRequest(request);
 
                     int statusCode = response.getStatusLine().getStatusCode();
-                    if (statusCode >= 200 && statusCode < 300) {
-                        //
-                    } else {
+                    if (statusCode < 200 || statusCode >= 300) {
                         throw new MigrationException(
                                 "execution of script '%s' failed with HTTP status %s: %s".formatted(
                                         scriptToExecute.getFileNameInfo(),
