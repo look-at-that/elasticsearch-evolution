@@ -247,7 +247,7 @@ class ElasticsearchEvolutionIT {
         var docs = esUtils.fetchAllDocuments("multistep");
 
         assertSoftly(sofly ->
-                sofly.assertThat(docs).hasSize(1));
+                sofly.assertThat(docs).hasSize(2));
 
     }
 }

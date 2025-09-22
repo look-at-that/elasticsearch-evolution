@@ -15,9 +15,18 @@ Content-Type: application/json
 
 ---
 
-PUT multistep/_doc/1?refresh
+POST multistep/_doc
 Content-Type: application/json
 
 {
-   "my_field": "expect_to_be_found"
+   "my_field": "value #1"
+}
+
+---
+
+POST multistep/_doc
+Content-Type: application/json
+
+{
+   "my_field": "# value 2"
 }
