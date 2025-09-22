@@ -244,6 +244,10 @@ class ElasticsearchEvolutionIT {
                     .allMatch(MigrationScriptProtocol::isSuccess);
         });
         esUtils.refreshIndices();
+        var docs = esUtils.fetchAllDocuments("multistep");
+
+        assertSoftly(sofly ->
+                sofly.assertThat(docs).hasSize(1));
 
     }
 }

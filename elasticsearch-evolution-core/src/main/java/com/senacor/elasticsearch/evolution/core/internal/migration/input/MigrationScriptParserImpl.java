@@ -78,8 +78,8 @@ public class MigrationScriptParserImpl implements MigrationScriptParser {
     }
 
     private List<MigrationScriptRequest> parseContentSteps(RawMigrationScript script) {
-        return stream(script.getContent().split("^" + SCRIPT_STEPS_SEPARATOR + lineSeparator()))
-                .map(content -> new RawMigrationScript(script.getFileName(), content))
+        return stream(script.getContent().split(SCRIPT_STEPS_SEPARATOR + lineSeparator()))
+                .map(content -> new RawMigrationScript(script.getFileName(), content.stripLeading()))
                 .map(this::parseContent)
                 .toList();
     }
