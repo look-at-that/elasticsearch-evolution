@@ -255,7 +255,7 @@ class ElasticsearchEvolutionIT {
 
     @ParameterizedTest(name = "{0}")
     @ArgumentsSource(ElasticsearchArgumentsProvider.class)
-    void migrate_singleAndMultistepWithReindex_ok(String versionInfo, EsUtils esUtils, RestHighLevelClient restHighLevelClient) throws InterruptedException {
+    void migrate_singleAndMultistepWithReindex_ok(String versionInfo, EsUtils esUtils, RestHighLevelClient restHighLevelClient) {
         ElasticsearchEvolutionConfig elasticsearchEvolutionConfig = ElasticsearchEvolution.configure()
                 .setLocations(singletonList("classpath:es/ElasticsearchEvolutionTest/migrate_single_and_multistep_OK"));
         elasticsearchEvolutionConfig.setPlaceholders(Map.of("my_versioned_index", "multistep"));
