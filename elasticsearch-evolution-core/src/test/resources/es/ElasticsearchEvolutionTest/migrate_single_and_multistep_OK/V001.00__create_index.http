@@ -1,0 +1,16 @@
+PUT /${my_versioned_index}-v1.0
+Content-Type: application/json
+
+{
+  "aliases": {
+    "${my_versioned_index}": {}
+  },
+  "settings" : {
+    "number_of_shards" : 1
+  },
+  "mappings" : {
+    "properties" : {
+        "my_field": {"type": "text"}
+    }
+  }
+}

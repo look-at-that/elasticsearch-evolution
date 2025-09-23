@@ -229,7 +229,7 @@ class ElasticsearchEvolutionIT {
     @ArgumentsSource(ElasticsearchArgumentsProvider.class)
     void migrate_multistepScript_ok(String versionInfo, EsUtils esUtils, RestHighLevelClient restHighLevelClient) {
         ElasticsearchEvolutionConfig elasticsearchEvolutionConfig = ElasticsearchEvolution.configure()
-                .setLocations(singletonList("classpath:es/ElasticsearchEvolutionTest/migrate_multisteps"));
+                .setLocations(singletonList("classpath:es/ElasticsearchEvolutionTest/migrate_multistep_OK"));
         String historyIndex = elasticsearchEvolutionConfig.getHistoryIndex();
         historyRepository = new HistoryRepositoryImpl(restHighLevelClient.getLowLevelClient(), historyIndex, new MigrationScriptProtocolMapper(), 1000, objectMapper);
 
@@ -244,10 +244,44 @@ class ElasticsearchEvolutionIT {
                     .allMatch(MigrationScriptProtocol::isSuccess);
         });
         esUtils.refreshIndices();
-        var docs = esUtils.fetchAllDocuments("multistep");
 
-        assertSoftly(sofly ->
-                sofly.assertThat(docs).hasSize(2));
+        assertSoftly(softly ->
+                softly.assertThat(esUtils.fetchAllDocuments("multistep")).
+                        hasSize(2)
+        );
 
+
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @ArgumentsSource(ElasticsearchArgumentsProvider.class)
+    void migrate_singleAndMultistepWithReindex_ok(String versionInfo, EsUtils esUtils, RestHighLevelClient restHighLevelClient) throws InterruptedException {
+        ElasticsearchEvolutionConfig elasticsearchEvolutionConfig = ElasticsearchEvolution.configure()
+                .setLocations(singletonList("classpath:es/ElasticsearchEvolutionTest/migrate_single_and_multistep_OK"));
+        elasticsearchEvolutionConfig.setPlaceholders(Map.of("my_versioned_index", "multistep"));
+        String historyIndex = elasticsearchEvolutionConfig.getHistoryIndex();
+        historyRepository = new HistoryRepositoryImpl(restHighLevelClient.getLowLevelClient(), historyIndex, new MigrationScriptProtocolMapper(), 1000, objectMapper);
+
+
+        assertSoftly(softly -> {
+            softly.assertThat(elasticsearchEvolutionConfig.load(restHighLevelClient.getLowLevelClient()).migrate())
+                    .as("# of successful executed scripts ")
+                    .isEqualTo(3);
+            softly.assertThat(historyRepository.findAll())
+                    .as("# of historyIndex entries and all are successful")
+                    .hasSize(3)
+                    .allMatch(MigrationScriptProtocol::isSuccess);
+        });
+        esUtils.refreshIndices();
+
+        assertSoftly(softly -> {
+            var docsFromOldIndexVersion = esUtils.fetchAllDocuments("multistep-v1.0");
+            var docsFromNewIndexVersion = esUtils.fetchAllDocuments("multistep-v2.0");
+            var docsCurrentFromAlias = esUtils.fetchAllDocuments("multistep");
+
+            softly.assertThat(docsFromOldIndexVersion).isEmpty();
+            softly.assertThat(docsFromNewIndexVersion).hasSize(10);
+            softly.assertThat(docsCurrentFromAlias).hasSize(10);
+        });
     }
 }

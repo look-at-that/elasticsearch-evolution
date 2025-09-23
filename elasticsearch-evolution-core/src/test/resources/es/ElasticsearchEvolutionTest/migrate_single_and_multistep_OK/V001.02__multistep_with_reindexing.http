@@ -1,0 +1,45 @@
+PUT /${my_versioned_index}-v2.0
+Content-Type: application/json
+
+{
+  "aliases": {
+    "${my_versioned_index}": {}
+  },
+  "settings" : {
+    "number_of_shards" : 1
+  },
+  "mappings" : {
+    "properties" : {
+        "my_field": {"type": "text"}
+    }
+  }
+}
+
+
+---
+
+POST /_reindex
+Content-Type: application/json
+
+{
+   "source":{
+      "index":"${my_versioned_index}-v1.0"
+   },
+   "dest":{
+      "index":"${my_versioned_index}-v2.0"
+   }
+}
+
+---
+
+POST ${my_versioned_index}-v1.0/_delete_by_query?refresh=true
+Content-Type: application/json
+
+{
+    "query" : { "match_all" : {} }
+}
+
+
+---
+
+DELETE ${my_versioned_index}-v1.0/_alias/${my_versioned_index}

@@ -1,0 +1,23 @@
+POST /${my_versioned_index}-v1.0/_bulk?refresh=wait_for
+Content-Type: application/json
+
+{ "create": { "_index": "${my_versioned_index}-v1.0", "_id": "1" } }
+{ "my_field": "value #1" }
+{ "create": { "_index": "${my_versioned_index}-v1.0", "_id": "2" } }
+{ "my_field": "value #2" }
+{ "create": { "_index": "${my_versioned_index}-v1.0", "_id": "3" } }
+{ "my_field": "value #3" }
+{ "create": { "_index": "${my_versioned_index}-v1.0", "_id": "4" } }
+{ "my_field": "value #4" }
+{ "create": { "_index": "${my_versioned_index}-v1.0", "_id": "5" } }
+{ "my_field": "value #5" }
+{ "create": { "_index": "${my_versioned_index}-v1.0", "_id": "6" } }
+{ "my_field": "value #6" }
+{ "create": { "_index": "${my_versioned_index}-v1.0", "_id": "7" } }
+{ "my_field": "value #7" }
+{ "create": { "_index": "${my_versioned_index}-v1.0", "_id": "8" } }
+{ "my_field": "value #8" }
+{ "create": { "_index": "${my_versioned_index}-v1.0", "_id": "9" } }
+{ "my_field": "value #9" }
+{ "create": { "_index": "${my_versioned_index}-v1.0", "_id": "10" } }
+{ "my_field": "value #10" }
